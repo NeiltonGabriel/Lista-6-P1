@@ -1,0 +1,120 @@
+#include <stdio.h>
+
+void inverter(int lista[], int posicao, int final, int invertido[], int posicao_inversa)//lista, 4, 0, invertido, 0
+{
+    if (posicao == final) return; //4 == 0
+
+    invertido[posicao_inversa] = lista[posicao - 1]; 
+    inverter(lista, posicao - 1, final, invertido, posicao_inversa + 1);
+}
+
+void imprimir_soma(int vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+
+    printf("%d ", vetor[posicao]);
+    imprimir_soma(vetor, posicao + 1, final);
+}
+
+void somar(int lista[], int parimpar[], int posicao, int final, int soma[])
+{
+    if (posicao == final) return;
+    soma[posicao] = lista[posicao] + parimpar[posicao];
+    somar(lista, parimpar, posicao + 1, final, soma);
+}
+
+void imprimir_par_impar(int parimpar[], int posicao, int final)
+{
+    if (posicao == (final - 1))
+    {
+        printf("%d\n", parimpar[posicao]);
+        return;
+    }
+    printf("%d ", parimpar[posicao]);
+    imprimir_par_impar(parimpar, posicao + 1, final);
+}
+
+int par(int lista[], int vetor[], int posicao, int final, int posicao_2)
+{
+    if (posicao >= final) return posicao_2;
+    else
+    {
+        if ((posicao) % 2 == 0)
+        {
+            vetor[posicao_2] = lista[posicao];
+        }
+        par(lista, vetor, posicao + 2, final, posicao_2 + 1);
+    }
+}
+
+void impar(int lista[], int vetor[], int posicao, int final, int posicao_2)
+{
+    if (posicao >= final) return;
+    else
+    {
+        if ((posicao % 2) != 0)
+        {
+            vetor[posicao_2] = lista[posicao];
+        }
+        impar(lista, vetor, posicao + 2, final, posicao_2 + 1);
+    }
+}
+
+void imprimir(int vetor[], int posicao, int final)
+{
+    if (posicao == final)
+    {
+        printf("\n");
+        return;
+    }
+    printf("%d ", vetor[posicao]);
+    imprimir(vetor, posicao + 1, final);
+}
+
+void imprimir_inverso(int vetor[], int posicao, int final)
+{
+    if (posicao == (final - 1)) 
+    {
+        printf("%d\n", vetor[posicao]);
+        return;
+    }
+    printf("%d ", vetor[posicao]);
+    imprimir_inverso(vetor, posicao + 1, final);
+}
+
+void ler(int posicao, int lista[])
+{
+    int numero;
+    
+    if (scanf("%d", &numero) == EOF)
+    {
+        int parimpar[posicao];
+        int soma[posicao];
+        int inverso[posicao];
+
+        inverter(lista, posicao, 0, inverso, 0);
+        //imprimir(lista, 0, posicao);
+        printf("Invert: ");
+        imprimir_inverso(inverso, 0, posicao); //imprimir de tr�s para frente
+        int posicao_nova = par(lista, parimpar, 0, posicao, 0); //coloca os pares
+        impar(lista, parimpar, 1, posicao, posicao_nova); //coloca os impares
+        printf("ParImp: ");
+        imprimir_par_impar(parimpar, 0, posicao); //imprimir o array rearrumado
+        somar(inverso, parimpar, 0, posicao, soma); //soma os dois vetores
+        printf("Soma: ");
+        imprimir_soma(soma, 0, posicao);
+        return;
+    }
+    else
+    {
+        lista[posicao] = numero;
+        ler(posicao + 1, lista);
+    }
+}
+
+int main()
+{
+    int lista[100];
+    ler(0, lista);
+    return 0;
+}
