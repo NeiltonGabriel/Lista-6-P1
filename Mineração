@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+void saida(int tuneis[], int posicao, int final, int comeco)
+{
+    posicao = comeco;
+    if (tuneis[posicao] == -1) printf("%d", posicao);
+    else
+    {
+        comeco = tuneis[posicao];
+        saida(tuneis, posicao, final, comeco);
+    }
+}
+
+void ler_array(int vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+    scanf("%d", &vetor[posicao]);
+    ler_array(vetor, ++posicao, final);
+}
+
+int main()
+{
+    int numero, comeco;
+    scanf("%d", &numero);
+    int tuneis[numero];
+    ler_array(tuneis, 0, numero);
+    scanf("%d", &comeco);
+    saida(tuneis, 0, numero, comeco);
+}
