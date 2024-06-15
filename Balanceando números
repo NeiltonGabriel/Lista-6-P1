@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+int comparar(int vetor[], int posicao, int final, int abriu, int fechou, int historico)
+{
+    //historico == 0 significa que n�o tem nenhum parenteses aberto
+
+    if (posicao == final)
+    {
+        if (historico != 0) return 1;
+        else return 0;
+    }
+
+    if (vetor[posicao] == abriu)
+    {
+        historico++; //abriu um parenteses
+        return comparar(vetor, posicao + 1, final, abriu, fechou, historico);
+    }
+    else if (vetor[posicao] == fechou)
+    {
+        if (historico != 0)
+        {
+            historico--;
+            return comparar(vetor, posicao + 1, final, abriu, fechou, historico);
+        }
+        else return 1;
+    }
+}
+
+void ler_vetor(int vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+    scanf("%d", &vetor[posicao]);
+    ler_vetor(vetor, posicao + 1, final);
+}
+
+int main()
+{
+    int abre, fecha, tamanho;
+    scanf("%d %d %d", &abre, &fecha, &tamanho);
+    int vetor[tamanho];
+    ler_vetor(vetor, 0, tamanho);
+    int balanceado = comparar(vetor, 0, tamanho, abre, fecha, 0);
+    (balanceado != 0) ? printf("Desbalanceada!") : printf("Balanceada!");
+    return 0;
+}
