@@ -1,0 +1,118 @@
+#include <stdio.h>
+
+void comparar(int prioridade[], int posicao_prioridade, int resultados[], int ficha[], int posicao_ficha)
+{
+    if (posicao_prioridade == 6) return;
+    if (prioridade[posicao_prioridade] == 1) ficha[posicao_ficha] = resultados[0];
+    else if (prioridade[posicao_prioridade] == 2) ficha[posicao_ficha] = resultados[1];
+    else if (prioridade[posicao_prioridade] == 3) ficha[posicao_ficha] = resultados[2];
+    else if (prioridade[posicao_prioridade] == 4) ficha[posicao_ficha] = resultados[3];
+    else if (prioridade[posicao_prioridade] == 5) ficha[posicao_ficha] = resultados[4];
+    else if (prioridade[posicao_prioridade] == 6) ficha[posicao_ficha] = resultados[5];
+    comparar(prioridade, posicao_prioridade + 1, resultados, ficha, posicao_ficha + 1);
+}
+
+void bolha(int vetor[], int posicao, int tamanho)
+{
+    if (posicao == (tamanho - 1)) return;
+    else
+    {
+        if (vetor[posicao] < vetor[posicao + 1])
+        {
+            int caixa = vetor[posicao];
+            vetor[posicao] = vetor[posicao + 1];
+            vetor[posicao + 1] = caixa;
+        }
+        bolha(vetor, posicao + 1, tamanho);
+    }
+}
+
+void ordenar(int vetor[], int posicao, int tamanho)
+{
+
+    if (posicao == (tamanho - 1)) return;
+    else
+    {
+        bolha(vetor, posicao, tamanho);
+        ordenar(vetor, 0, tamanho - 1);
+    }
+}
+
+int soma(int vetor[])
+{
+    int soma123, soma124, soma134, soma234; //n!/[p!(n-p)!] -> n = 4 e p = 3
+
+    soma123 = vetor[0] + vetor[1] + vetor[2];
+    soma124 = vetor[0] + vetor[1] + vetor[3];
+    soma134 = vetor[0] + vetor[2] + vetor[3];
+    soma234 = vetor[1] + vetor[2] + vetor[3];
+
+    if (soma123 >= soma124 && soma123 >= soma134 && soma123 >= soma234) return soma123;
+    else if (soma124 >= soma123 && soma124 >= soma134 && soma124 >= soma234) return soma124;
+    else if (soma134 >= soma123 && soma134 >= soma124 && soma134 >= soma234) return soma134;
+    else return soma234;
+}
+
+void analise(int dado1[], int dado2[], int dado3[], int dado4[], int dado5[], int dado6[], int prioridade[], int ficha[])
+{
+    int soma1, soma2, soma3, soma4, soma5, soma6;
+    int resultados[6];
+
+    soma1 = soma(dado1);
+    soma2 = soma(dado2);
+    soma3 = soma(dado3);
+    soma4 = soma(dado4);
+    soma5 = soma(dado5);
+    soma6 = soma(dado6);
+
+    resultados[0] = soma1;
+    resultados[1] = soma2;
+    resultados[2] = soma3;
+    resultados[3] = soma4;
+    resultados[4] = soma5;
+    resultados[5] = soma6;
+    
+    ordenar(resultados, 0, 6);
+
+    comparar(prioridade, 0, resultados, ficha, 0);
+    return;
+}
+
+void ler_array(int vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+
+    scanf("%d", &vetor[posicao]);
+    ler_array(vetor, posicao + 1, final);
+}
+
+int main()
+{
+    int dado1[4];
+    int dado2[4];
+    int dado3[4];
+    int dado4[4];
+    int dado5[4];
+    int dado6[4];
+    int prioridade[6];
+    int ficha[6];
+
+    ler_array(dado1, 0, 4);
+    ler_array(dado2, 0, 4);
+    ler_array(dado3, 0, 4);
+    ler_array(dado4, 0, 4);
+    ler_array(dado5, 0, 4);
+    ler_array(dado6, 0, 4);
+    ler_array(prioridade, 0, 6);
+
+    analise(dado1, dado2, dado3, dado4, dado5, dado6, prioridade, ficha);
+
+    printf("For = %d\n", ficha[0]);
+    printf("Des = %d\n", ficha[1]);
+    printf("Con = %d\n", ficha[2]);
+    printf("Sab = %d\n", ficha[3]);
+    printf("Int = %d\n", ficha[4]);
+    printf("Car = %d\n", ficha[5]);
+
+    return 0;
+}
