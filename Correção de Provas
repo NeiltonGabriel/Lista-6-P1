@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <string.h>
+#define TAMANHO_RESPOSTA 10
+
+int apareceu(int vetor[], int posicao, int final, int valor, int vezes)
+{
+    if (posicao == final) return vezes;
+
+    if (vetor[posicao] == valor)
+    {
+        vezes++;
+        return apareceu(vetor, posicao + 1, final, valor, vezes);
+    }
+    else return apareceu(vetor, posicao + 1, final, valor, vezes);
+}
+
+int moda(int vetor[], int posicao, int final, int vezes_anterior, int numero_de_anterior, int resposta)
+{
+    int vezes_atual;
+    vezes_atual = apareceu(vetor, 0, final, vetor[posicao], 0);
+    
+    if (posicao == final) return resposta;
+    if (vetor[posicao] == -1) return moda(vetor, posicao + 1, final, vezes_anterior, numero_de_anterior, resposta);
+    
+    if (vezes_atual > vezes_anterior  || (vezes_atual == vezes_anterior && vetor[posicao] > numero_de_anterior))
+    {
+        numero_de_anterior = vetor[posicao];
+        vezes_anterior = vezes_atual;
+        resposta = numero_de_anterior;
+    }
+    return moda(vetor, posicao + 1, final, vezes_anterior, numero_de_anterior, resposta);
+}
+
+int comparar_notas(int vetor[], int posicao, int final, int media_minima, int passaram)
+{
+    if (vetor[posicao] == -1 || posicao == final) return passaram;
+    if (vetor[posicao] >= 6) passaram++;
+    return comparar_notas(vetor, posicao + 1, final, media_minima, passaram);
+}
+
+void bolha(int vetor[], int posicao, int tamanho)
+{
+    if (posicao == (tamanho - 1)) return;
+    else
+    {
+        if (vetor[posicao] > vetor[posicao + 1])
+        {
+            int caixa = vetor[posicao];
+            vetor[posicao] = vetor[posicao + 1];
+            vetor[posicao + 1] = caixa;
+        }
+        bolha(vetor, posicao + 1, tamanho);
+    }
+}
+
+void ordenar(int vetor[], int posicao, int tamanho)
+{
+
+    if (posicao == (tamanho - 1)) return;
+    else
+    {
+        bolha(vetor, posicao, tamanho);
+        ordenar(vetor, 0, tamanho - 1);
+    }
+}
+
+void imprimir_notas(int vetor[], int posicao, int final)
+{
+    if (vetor[posicao] == -1 || posicao == final)
+    {
+        printf("\n");
+        return;
+    }
+    printf("%d ", vetor[posicao]);
+    imprimir_notas(vetor, posicao + 1, final);
+}
+
+void zerar(int vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+    vetor[posicao] = -1;
+    zerar(vetor,posicao + 1, final);
+}
+int comparar(char gabarito[], char resposta_do_aluno[], int posicao, int final, int acertou)
+{
+    if (posicao == final) return acertou;
+    if (gabarito[posicao] == resposta_do_aluno[posicao]) acertou++;
+    comparar(gabarito, resposta_do_aluno, posicao + 1, final, acertou);
+}
+
+void imprimir(char vetor[], int posicao, int final)
+{
+    if (posicao == final)
+    {
+        printf("\n");
+        return;
+    }
+
+    printf("%c ", vetor[posicao]);
+    imprimir(vetor, posicao + 1, final);
+}
+
+void ler(char vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+    scanf(" %c", &vetor[posicao]);
+    ler(vetor, posicao + 1, final);
+}
+
+void tela(char gabarito[], int notas[], int numero_do_aluno)
+{
+    int parada;
+    char resposta_do_aluno[TAMANHO_RESPOSTA];
+    
+    scanf("%d", &parada);
+    
+    if (parada != 9999)
+    {
+        numero_do_aluno = parada;
+        ler(resposta_do_aluno, 0, TAMANHO_RESPOSTA);
+        
+        double nota = comparar(gabarito, resposta_do_aluno, 0, TAMANHO_RESPOSTA, 0);
+        
+        printf("%d %.1lf\n", numero_do_aluno, nota);
+        
+        notas[numero_do_aluno - 1] = nota;
+        
+        tela(gabarito, notas, numero_do_aluno);
+    }
+    else
+    {
+        int passaram = comparar_notas(notas, 0, 9999, 6, 0); //array, posicao, final, nota_minima, quatidade que passou
+        
+        ordenar(notas, 0, 9999);
+        
+        double porcentagem = (double)(passaram * 100) / (double)numero_do_aluno;
+        
+        printf("%.1lf%%\n", porcentagem);
+        
+        double repetida = moda(notas, 0, 9999, 0, notas[0], notas[0]);
+        
+        printf("%.1lf", repetida);
+    }
+}
+
+int main()
+{
+    char gabarito[TAMANHO_RESPOSTA];
+    int notas[9999];
+
+    zerar(notas, 0, 9999);
+    ler(gabarito, 0, TAMANHO_RESPOSTA);
+    tela(gabarito, notas, 0);
+
+    return 0;
+}
+
+/*
+percentual vai ser igual a (quantidade de alunos que passou(nota>=6) / total de alunos) * 100
+*/
