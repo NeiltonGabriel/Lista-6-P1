@@ -1,0 +1,85 @@
+#include <stdio.h>
+
+/*void imprimir(int vetor[], int posicao, int final)
+{
+    if (posicao == final)
+    {
+        printf("\n");
+        return;
+    }
+    else
+    {
+        printf("%d ", vetor[posicao]);
+        imprimir(vetor, posicao + 1, final);
+    }
+}*/
+
+void batalha(int nivel_marquinhos, int inimigos_ordenados[], int posicao, int final, int inimigos_derrotados, int nivel_novo_marquinhos)
+{
+    if (posicao == final)
+    {
+        double porcentagem = ((double)inimigos_derrotados * 100) / (double)final;
+        printf("N�vel de energia: %d\n", nivel_marquinhos);
+        printf("%.2lf%%\n", porcentagem);
+        if (nivel_marquinhos > 20000) printf("Marquinhos � o novo Mestre da Vila da �rvore!");
+        else printf("Continue tentando!");
+        return;
+    }
+    else
+    {
+        if (nivel_marquinhos >= inimigos_ordenados[posicao])
+        {
+            inimigos_derrotados++;
+            nivel_novo_marquinhos = nivel_marquinhos + (nivel_marquinhos - inimigos_ordenados[posicao]);
+            batalha(nivel_novo_marquinhos, inimigos_ordenados, posicao + 1, final, inimigos_derrotados, 0);
+        }
+        else batalha(nivel_marquinhos, inimigos_ordenados, posicao + 1, final, inimigos_derrotados, 0);
+    }
+}
+
+void atribuir(int inimigos_ordenados[], int inimigos[], int ordem[], int posicao_inimigos_ordenados, int posicao_ordem, int final)
+{
+    if (posicao_inimigos_ordenados == final) return;
+    else
+    {
+        inimigos_ordenados[posicao_inimigos_ordenados] = inimigos[ordem[posicao_ordem] - 1];
+        atribuir(inimigos_ordenados, inimigos, ordem, posicao_inimigos_ordenados + 1, posicao_ordem + 1, final);
+    }
+}
+
+void ler_array(int vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+    scanf("%d", &vetor[posicao]);
+    ler_array(vetor, ++posicao, final);
+}
+
+int main()
+{
+    int nivel_marquinhos, tamanho;
+    scanf("%d %d", &nivel_marquinhos, &tamanho);
+    int inimigos[tamanho];
+    ler_array(inimigos, 0, tamanho);
+    int ordem[tamanho];
+    int inimigos_ordenados[tamanho];
+    ler_array(ordem, 0, tamanho);
+    atribuir(inimigos_ordenados, inimigos, ordem, 0, 0, tamanho);
+    //imprimir(inimigos_ordenados, 0, tamanho);
+    batalha(nivel_marquinhos, inimigos_ordenados, 0, tamanho, 0, 0);
+    return 0;
+    /*
+    double porcentagem = (double)tamanho / (double)inimigos derrotados
+    printf("N�vel de energia: %d\n", nivel_novo_marquinhos);
+    printf("%.2lf%%\n", porcentagem);
+    (nivel_novo_marquinhos >= 20000) ? printf("Marquinhos � o novo Mestre da Vila da �rvore!") : printf("Continue tentando!");
+    */
+}
+
+/*
+energia vital > 20000
+Marquinhos s� derrota algu�m se energia vital do inimigo <= energia vital Marquinhos
+Energia vital inimigo > energia vital do Marquinho -> Marquinhos foge
+Quando batalha, a sua energia vital aumenta na propor��o da diferen�a entre a dele e a do inimigo:
+Energia vital nova do Marquinhos = energia vital do Marquinhos - energia vital do inimigo
+
+*/
