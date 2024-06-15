@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <math.h>
+
+void imprimir(int vetor[], int posicao, int final)
+{
+  if (posicao == final) return;
+  printf("%d ", vetor[posicao]);
+  imprimir(vetor, posicao + 1, final);
+}
+
+void decimal_para_binario(int numero, int binario[], int posicao, int final)
+{
+    int numero_de_analise = numero;
+
+    if ((numero_de_analise / 2) == 0)
+    {
+        binario[posicao - 1] = numero_de_analise;
+        return;
+    }
+    else
+    {
+        binario[posicao - 1] = (numero_de_analise % 2);
+        numero = numero_de_analise / 2;
+        decimal_para_binario(numero, binario, posicao - 1, final);
+    }
+}
+
+int binario_para_decimal(int numero1[], int posicao, int final, int resultado, int contador)
+{
+    if (posicao == final) return resultado;
+    else
+    {
+        resultado += numero1[posicao - 1] * pow(2,contador);
+        return binario_para_decimal(numero1, posicao - 1, final, resultado, contador + 1); 
+    }
+}
+
+void ler_array(int vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+    scanf("%d", &vetor[posicao]);
+    ler_array(vetor, ++posicao, final);
+}
+
+int main()
+{
+    int tamanho, decimal1, decimal2, soma;
+
+    scanf("%d", &tamanho);
+    int numero1[tamanho];
+    int numero2[tamanho];
+    int binario[tamanho + 1];
+
+    ler_array(numero1, 0, tamanho);
+    ler_array(numero2, 0, tamanho);
+    decimal1 = binario_para_decimal(numero1, tamanho, 0, 0, 0);
+    decimal2 = binario_para_decimal(numero2, tamanho, 0, 0, 0);
+    
+    soma = decimal1 + decimal2;
+    
+    decimal_para_binario(soma, binario, tamanho + 1, 0);
+
+    if(binario[0] == 1)
+    {
+        printf("OVERFLOW");
+        return 0;
+    }
+    else
+    {
+        imprimir(binario, 1, tamanho + 1);
+        return 0;
+    }
+}
