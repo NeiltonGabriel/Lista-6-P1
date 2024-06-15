@@ -1,0 +1,90 @@
+#include <stdio.h>
+
+int comparar(int valor, int ja_passei[], int posicao, int final)
+{
+
+    if(posicao == final) return 0;
+    if(valor == ja_passei[posicao]) return 1;
+
+    return comparar(valor, ja_passei, posicao + 1, final);
+}
+
+
+void ciclo(int buracos[], int ja_passei[], int comeco, int posicao_buracos, int posicao_ja_passei, int final)
+{
+
+    ja_passei[posicao_ja_passei] = posicao_ja_passei; //guardou o buraco que passei
+
+    if(posicao_buracos >= final) return;
+    if(buracos[posicao_ja_passei] == comeco) return;
+    
+    return ciclo(buracos, ja_passei, comeco, posicao_buracos + 1, buracos[posicao_ja_passei], final);
+}
+
+int quantidade(int buracos[], int ja_passei[], int posicao, int tocas, int final)
+{
+
+
+    if(posicao == final) return tocas;
+
+    if(comparar(posicao, ja_passei, 0, final) == 0) //ainda nao passei por esse buraco
+    {
+        
+        ciclo(buracos, ja_passei, posicao, posicao, posicao, final);
+        tocas += 1;
+    }
+
+    return quantidade(buracos, ja_passei, posicao + 1, tocas, final);
+}
+
+void zerar(int ja_passei[], int posicao, int final)
+{
+    if(posicao == final) return;
+    ja_passei[posicao] = -1;
+    return zerar(ja_passei, posicao + 1, final);
+}
+
+void imprimir(int vetor[], int posicao, int final)
+{
+
+    if(posicao == final)
+    {
+        printf("\n");
+        return;
+    }
+    printf("%d ", vetor[posicao]);
+    return imprimir(vetor, posicao + 1, final);
+}
+
+void ler(int vetor[], int posicao, int final)
+{
+
+    if(posicao == final) return;
+    scanf("%d", &vetor[posicao]);
+    return ler(vetor, posicao + 1, final);
+}
+
+int main()
+{
+
+    int tamanho, quantas_tocas;
+
+    scanf("%d", &tamanho);
+
+    int buracos[tamanho];
+    int ja_passei[tamanho];
+    ler(buracos, 0, tamanho);
+    zerar(ja_passei, 0, tamanho);
+
+    //imprimir(buracos, 0, tamanho);
+    //imprimir(ja_passei, 0, tamanho);
+    quantas_tocas = quantidade(buracos, ja_passei, 0, 0, tamanho);
+    //imprimir(ja_passei, 0, tamanho);
+    printf("%d\n", quantas_tocas);
+
+  return 0;
+}
+/*
+Cada buraco tem exatamente uma liga��o, essa liga��o � �nica e sempre forma um ciclo.
+Nenhum buraco recebe duas ou mais liga��es
+*/
