@@ -1,0 +1,57 @@
+#include <stdio.h>
+
+int mudanca(int vetor[], int posicao, int final, int mudou, int resposta)
+{
+    if (final == 1) return 1; //array de tamanho 1
+    if (posicao == (final - 1)) //chegou no ultimo elemento do array
+    {
+        return resposta;
+    }
+    else
+    {
+        if (vetor[posicao] != vetor[posicao + 1]) //mudou de 0 para 1 ou de 1 para 0
+        {
+            mudou += 1; //ent�o soma 1 na vari�vel mudou
+            if (mudou > resposta) resposta = mudou; //verifica se a minha resposta at� o momento � menor que a quantidade de mudancas atual
+        }
+        else mudou = 1; //se for 0 0 ou 1 1, entao a contagem de mudanca volta para 1
+        return mudanca(vetor, posicao + 1, final, mudou, resposta);
+    }
+}
+
+void ler_vetor(int vetor[], int posicao, int final)
+{
+    if (posicao == final) return;
+    scanf("%d", &vetor[posicao]);
+    ler_vetor(vetor, posicao + 1, final);
+}
+
+void ler(int contador, int maior)
+{
+    int tamanho, caixa;
+    
+    if (contador != 0)
+    {
+        scanf("%d", &tamanho);
+
+        int binario[tamanho];
+        ler_vetor(binario, 0, tamanho);
+        
+        caixa = mudanca(binario, 0, tamanho, 1, 0); //guarda o maior tamanho da analise atual
+        if (caixa > maior) maior = caixa; // se o tamanho da analise atual for maior que o da anterior entao troca
+        ler(contador - 1, maior);
+    }
+    else
+    {
+        printf("%d\n", maior);
+        return;
+    }
+}
+
+int main()
+{
+    int vezes;
+    scanf("%d", &vezes);
+    ler(vezes, 1);
+    return 0;
+}
